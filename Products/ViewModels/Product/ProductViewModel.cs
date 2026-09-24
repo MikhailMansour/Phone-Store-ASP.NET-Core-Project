@@ -23,5 +23,8 @@
         public int Quantity { get; set; }
         public string HeaderImage { get; set; } = null!;
         public int NumOfSoldItems { get; set; }
+        public bool HasOffer { get; set; }
+        public double? DiscountPrice { get; set; }
+
     }
 }

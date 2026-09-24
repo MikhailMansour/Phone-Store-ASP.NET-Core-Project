@@ -1,4 +1,4 @@
-using Mapster;
+﻿using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Products.Helpers;
@@ -8,6 +8,18 @@ using Products.Services;
 
 namespace Products
 {
+    namespace Products.Models
+    {
+        public class Product
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            // ... (باقي خصائص المنتج الخاصة بك) ...
+
+            // أضف هذا السطر هنا داخل كلاس Product:
+            public List<Review>? Reviews { get; set; } = new List<Review>();
+        }
+    }
     public class Program
     {
         public async static Task Main(string[] args)
@@ -17,7 +29,7 @@ namespace Products
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ApplicationContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("Dev")));
+         options.UseSqlServer(builder.Configuration.GetConnectionString("Dev")));
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -31,64 +43,46 @@ namespace Products
                 options.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<ApplicationContext>()
               .AddDefaultTokenProviders();
+
             builder.Services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = "/Authentication/SignIn"; // Change to your desired path
-                //options.AccessDeniedPath = "/YourCustomPath/AccessDenied"; // Optional: Change access denied path
+                options.LoginPath = "/Authentication/SignIn";
             });
+
             builder.Services.AddScoped<ProductRepository, ProductRepository>();
             builder.Services.AddScoped<FileServices, FileServices>();
             builder.Services.AddScoped<ProductServices, ProductServices>();
-            builder.Services.AddScoped<BuyerRepository, BuyerRepository>();
             builder.Services.AddScoped<DataSeeder, DataSeeder>();
+            builder.Services.AddTransient<DataSeeder>();
             builder.Services.AddMapster();
             builder.Services.RegisterMapsterConfiguration();
 
             var app = builder.Build();
 
-            //Update Database
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<ApplicationContext>();
-                    // Apply any pending migrations
-                    context.Database.Migrate();
-                    if (!context.Products.Any())
-                    {
-                        var seeder = services.GetRequiredService<DataSeeder>();
-                        await seeder.SeedData();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database.");
-                }
-            }
-
-
-
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication(); // تمت إضافة خطوة التحقق من الهوية لضمان عمل [Authorize] بشكل سليم
             app.UseAuthorization();
             app.UseStaticFiles();
-            app.MapStaticAssets();
+
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Product}/{action=Index}/{id?}")
-                .WithStaticAssets();
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var seeder = services.GetRequiredService<DataSeeder>();
+                await seeder.CreateAllRoles();
+            }
 
             app.Run();
         }

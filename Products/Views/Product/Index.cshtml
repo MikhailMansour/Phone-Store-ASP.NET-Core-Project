@@ -4,45 +4,38 @@
     Layout = "~/Views/Shared/_MyLayout.cshtml";
 }
 
-<div class="row justify-content-center align-items-end p-5">
-    @foreach(var item in Model.values)
+<div class="row px-4">
+    @foreach (var item in Model.Items)
     {
-        <div class="col-md-3 p-4 my-3">
-            <div class="card shadow-lg rounded-3 overflow-hidden" style="height:380px">
-                <img src="~/images/@item.HeaderImage" class="card-img-top" height="200px">
-                <div class="card-body">
-                    <h5 class="card-title my-0 py-1">@item.Name</h5>
-                    <p class="card-text m-0 p-0">@item.Description</p>
-                    <p class="text-info m-0 p-0">@item.Price EGP</p>
-                    @if(item.IsBought)
+        <div class="col-md-3 p-3">
+            <div class="card shadow-sm rounded-4 overflow-hidden border-0" style="height: 420px;">
+                                       <a asp-action="Index" asp-controller="ProduectDetails" asp-route-productId="@item.Id" class="text-decoration-none text-muted">
+
+                <img src="~/images/@item.HeaderImage" class="card-img-top" style="height: 200px; object-fit: cover;">
+                </a>
+                <div class="card-body text-center">
+                                            <a asp-action="Index" asp-controller="ProduectDetails" asp-route-productId="@item.Id" class="text-decoration-none text-muted">
+
+                    <h5 class="card-title text-capitalize mb-1">@item.Name</h5>
+</a>
+Smart Phone
+                    @* <a asp-action="Index" asp-controller="ProduectDetails" asp-route-productId="@item.Id" class="text-decoration-none text-muted">
+                        <p class="card-text small">@item.Description</p>
+                    </a> *@
+                    <p class="text-info fw-semibold">@item.Price EGP</p>
+
+                    @if (item.IsBought)
                     {
-                        <span class="text-danger fw-bold w-100">Out Of Stock</span>
-                    }else
+                        <span class="text-danger fw-bold">Out Of Stock</span>
+                    }
+                    else
                     {
-                        <a asp-action="Product" asp-controller="Product" asp-route-productId="@item.Id" class="btn btn-dark w-100">Buy Now</a>
+                        <a asp-action="Product" asp-controller="Product" asp-route-productId="@item.Id" class="btn custom-signin-btn btn-dark w-100">Buy Now</a>
                     }
                 </div>
             </div>
         </div>
-
     }
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            @for(var i = 1; i<=Model.TotalPages;i++)
-            {
-                <li class="page-item"><a class="page-link" asp-action="Index" asp-route-index="@i" asp-route-size="10">@i</a></li>
-            }
-            <li class="page-item">
-                <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 </div>
+
 

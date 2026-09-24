@@ -10,6 +10,8 @@ namespace Products.ViewModels.Product
         public string Email { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;
         public int Quantity { get; set; }
+        public int NumOfSoldItems { get; set; }
+
         public string Street { get; set; } = null!;
         public string City { get; set; } = null!;
         public string ZIPCode { get; set; } = null!;

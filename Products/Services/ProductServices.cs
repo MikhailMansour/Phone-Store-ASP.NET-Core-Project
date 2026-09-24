@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Products.Helpers;
@@ -15,17 +16,20 @@ namespace Products.Services
         private readonly FileServices _fileServices;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly BuyerRepository _buyerRepository;
+       // private readonly BuyerRepository _buyerRepository;
+     
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public ProductServices(ProductRepository productRepository, FileServices fileServices,
                                IHttpContextAccessor httpContextAccessor, UserManager<ApplicationUser> userManager
-                               , BuyerRepository buyerRepository)
+                               , SignInManager<ApplicationUser> signInManager)
         {
             _productRepository = productRepository;
             _fileServices = fileServices;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
-            _buyerRepository = buyerRepository;
+           // _buyerRepository = buyerRepository;
+            _signInManager = signInManager;
         }
 
         public async Task AddProductAsync(CreateProductViewModel viewModel)
@@ -36,8 +40,12 @@ namespace Products.Services
                 var imageName = await _fileServices.Upload(image, "images");
                 productImagesPathes.Add(imageName);
             }
+
             var headerImage = await _fileServices.Upload(viewModel.HeaderImage, "images");
             var newProduct = viewModel.Adapt<Product>();
+            newProduct.HasOffer = viewModel.HasOffer;
+            newProduct.DiscountPrice = viewModel.HasOffer ? viewModel.DiscountPrice : null;
+
             newProduct.HeaderImage = headerImage;
             newProduct.IsBought = newProduct.Quantity > 0 ? false : true;
             newProduct.Images = new List<ProductImages>();
@@ -70,8 +78,9 @@ namespace Products.Services
                               Price = p.Price,
                               IsBought = p.IsBought,
                               Brand = p.Brand,
-                              NumOfSoldItems = p.NumOfSoldItems
-                          }).Paginate(index, size);
+                              NumOfSoldItems = p.NumOfSoldItems,
+                              HasOffer=p.HasOffer
+                          }).Where(c=>c.HasOffer!=true).Paginate(index, size);
             return products;
         }
 
@@ -146,6 +155,8 @@ namespace Products.Services
                 }
                 oldProduct.IsBought = oldProduct.Quantity > 0 ? false : true;
                 oldProduct.NumOfSoldItems = oldNumOfSoldItems;
+                oldProduct.HasOffer = viewModel.HasOffer;
+                oldProduct.DiscountPrice = viewModel.DiscountPrice;
                 var result = _productRepository.Update(oldProduct);
                 await _productRepository.Save();
             }
@@ -159,37 +170,56 @@ namespace Products.Services
             await _productRepository.Save();
             return result;
         }
+        [Authorize(Roles = "Buyer")]
 
-        public async Task PurchaseAsync(BuyerDetails buyerDetails)
+        public async Task<ProductBuyer> PurchaseAsync(BuyerDetails buyerDetails)
         {
+
+            int.TryParse(_httpContextAccessor.HttpContext?
+                      .User.FindFirstValue(ClaimTypes.NameIdentifier), out int BuyerId);
             var product = await _productRepository.ProductAsync(buyerDetails.ProductId);
-            var buyer = await _buyerRepository.BuyerByEmailAsync(buyerDetails.Email);
+            //var buyer = await _buyerRepository.BuyerByEmailAsync(buyerDetails.Email);
+            var PurchaseModel = buyerDetails.Adapt<ProductBuyer>();
             if (product.Quantity >= buyerDetails.Quantity)
             {
+                
                 product.NumOfSoldItems += buyerDetails.Quantity;
-                var PurchaseModel = buyerDetails.Adapt<ProductBuyer>();
-
-                if (buyer == null)
+                if (product.NumOfSoldItems == product.Quantity)
+                    product.IsBought = true;
+                if(product.HasOffer)
                 {
-                    buyer = new Buyer
-                    {
-                        Email = buyerDetails.Email,
-                        FullName = buyerDetails.FullName,
-                        PhoneNumber = buyerDetails.PhoneNumber,
-                    };
-                    PurchaseModel.Buyer = buyer;
-                    await _productRepository.AddProductBuyerAsync(PurchaseModel);
+                    PurchaseModel.Price = product.DiscountPrice;
+
                 }
                 else
                 {
-                    PurchaseModel.BuyerId = buyer.Id;
-                    await _productRepository.AddProductBuyerAsync(PurchaseModel);
+                    PurchaseModel.Price = product.Price;
                 }
+                    //if (buyer == null)
+                    //{
+                    //    buyer = new Buyer
+                    //    {
+                    //        Email = buyerDetails.Email,
+                    //        FullName = buyerDetails.FullName,
+                    //        PhoneNumber = buyerDetails.PhoneNumber,
+                    //    };
+                    //    //PurchaseModel.Buyer = buyer;
+                    //    var PurchaseResult = await _productRepository.AddProductBuyerAsync(PurchaseModel);
+                    //    return PurchaseResult;
+                    //}
+                    //else
+                    //{
+                    PurchaseModel.UserId = BuyerId;
+                    var PurchaseResult = await _productRepository.AddProductBuyerAsync(PurchaseModel);
+                    return PurchaseResult;
+               // }
                 if (product.NumOfSoldItems == product.Quantity)
                     product.IsBought = true;
                 _productRepository.Update(product);
-                await _productRepository.Save();
+                await _productRepository.Save(); 
+                
             }
+            return PurchaseModel;
 
         }
 

@@ -1,0 +1,17 @@
+﻿@model List<ApplicationUser>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<h2>All Buyers</h2>
+<table class="table table-striped">
+    <thead><tr><th>Name</th><th>Email</th></tr></thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>

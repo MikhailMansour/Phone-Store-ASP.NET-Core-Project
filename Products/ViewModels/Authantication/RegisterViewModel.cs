@@ -4,8 +4,8 @@ namespace Products.ViewModels.Authantication
 {
     public class RegisterViewModel
     {
-        [Required]
-        public string SSN { get; set; } = null!;
+        //[Required]
+        //public string SSN { get; set; } = null!;
         [Required]
         public string UserName { get; set; } = null!;
         [EmailAddress]
@@ -16,5 +16,7 @@ namespace Products.ViewModels.Authantication
         public string Password { get; set; } = null!;
         [Required]
         public string PhoneNumber { get; set; } = null!;
+        [Required(ErrorMessage = "Please select a role")]
+        public string Role { get; set; }
     }
 }

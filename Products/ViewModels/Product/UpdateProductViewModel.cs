@@ -2,7 +2,7 @@
 
 namespace Products.ViewModels.Product
 {
-    public class UpdateProductViewModel
+    public class UpdateProductViewModel: IValidatableObject
     {
 
         public int Id { get; set; }
@@ -80,5 +80,21 @@ namespace Products.ViewModels.Product
         public IFormFile? Header { get; set; }
         public string? HeaderImage { get; set; }
         public int NumOfSoldItems { get; set; }
+        public bool HasOffer { get; set; }
+        public double? DiscountPrice { get; set; }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (HasOffer)
+            {
+                if (DiscountPrice == null)
+                {
+                    yield return new ValidationResult("Discount Price is required when the product has an offer.", new[] { nameof(DiscountPrice) });
+                }
+                else if (DiscountPrice >= Price)
+                {
+                    yield return new ValidationResult("Discount Price must be less than the original Price.", new[] { nameof(DiscountPrice) });
+                }
+            }
+        }
     }
 }

@@ -12,5 +12,9 @@
         public int Quantity { get; set; }
         public int NumOfSoldItems { get; set; }
 
+        public bool HasOffer { get; set; }
+        public double? DiscountPrice { get; set; }
+
+
     }
 }

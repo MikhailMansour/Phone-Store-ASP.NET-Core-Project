@@ -5,20 +5,24 @@
     var index = 1;
 }
 
-<div class="container-fluid mx-0 px-5 bg-dark py-1 vh-100">
-    <div class="row my-3">
-        <a asp-action="Add" asp-controller="Product" class="btn btn-light fs-6 fw-bolder">Add New Product</a>
-    </div>
-    <table class="table table-dark table-hover  my-5">
-        <thead class="text-center">
+<div class="container-fluid mx-0 px-5 bg-light py-1 ">
+    
+    <h3 class=" mb-5 fw-bold">
+        <span class="bg-black text-white px-3 py-2 rounded">
+            <i class="fas fa-cog"></i> Statistics
+        </span>
+    </h3>
+    <hr />
+    <table class="table table-bordered table-hover  my-5">
+        <thead class="text-center bg-info text-white">
             <tr class="text-center">
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">Brand</th>
                 <th scope="col">Price</th>
                 <th scope="col">Total Quantity</th>
-                <th scope="col">Total Sold item</th>
-                <th scope="col">Sales Avrage</th>
+                <th scope="col">Total Sold Items</th>
+                <th scope="col">Sales Average</th>
             </tr>
         </thead>
         <tbody>
@@ -26,34 +30,37 @@
             {
                 decimal precentage;
                 string barColor = "";
-                if(pro.NumOfSoldItems == 0)
+                if (pro.NumOfSoldItems == 0)
                 {
-                    precentage = 00.0m;
+                    precentage = 0.0m;
                     barColor = "bg-danger";
-                }else if(pro.NumOfSoldItems == pro.Quantity)
+                }
+                else if (pro.NumOfSoldItems == pro.Quantity)
                 {
                     precentage = 100.0m;
                     barColor = "bg-success";
-                }else
+                }
+                else
                 {
                     precentage = ((decimal)pro.NumOfSoldItems / pro.Quantity) * 100.0m;
                     if (precentage < 35)
                         barColor = "bg-danger";
                     if (precentage >= 35 && precentage <= 75)
                         barColor = "bg-warning";
-                    if (precentage >75)
+                    if (precentage > 75)
                         barColor = "bg-success";
                 }
-                <tr class=" text-center">
+                <tr class="text-center">
                     <th scope="row">@index</th>
-                    <td><a class="" asp-action="Update" asp-route-id="@pro.Id" asp-controller="Product">@pro.Name</a></td>
+                    <td><a class="text-primary" asp-action="Update" asp-route-id="@pro.Id" asp-controller="Product">@pro.Name</a></td>
                     <td>@pro.Brand</td>
                     <td>@pro.Price</td>
                     <td>@pro.Quantity</td>
                     <td>@pro.NumOfSoldItems</td>
                     <td>
                         <div class="progress">
-                            <div class="progress-bar @barColor" role="progressbar" style="width: @precentage%" aria-valuenow="@precentage" aria-valuemin="0" aria-valuemax="100">@precentage</div>
+                            @precentage %
+                            <div class="progress-bar @barColor" role="progressbar" style="width: @precentage%" aria-valuenow="@precentage" aria-valuemin="0" aria-valuemax="100">@precentage%</div>
                         </div>
                     </td>
                 </tr>
@@ -62,4 +69,3 @@
         </tbody>
     </table>
 </div>
-

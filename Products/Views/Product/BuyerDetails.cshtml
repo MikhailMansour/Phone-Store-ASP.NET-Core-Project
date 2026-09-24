@@ -1,119 +1,183 @@
 ﻿@model BuyerDetails
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
 @{
+    var isAuthenticated = User.Identity.IsAuthenticated;
+    string fullName = "";
+    string email = "";
+    string phone = "";
+
+    if (isAuthenticated)
+    {
+        var user = await UserManager.GetUserAsync(User);
+        fullName = user?.UserName;
+        email = user?.Email;
+        phone = user?.PhoneNumber;
+    }
+    var remainingQuantity = Model.Quantity - Model.NumOfSoldItems;
+
     var payments = Enum.GetValues(typeof(PaymentMethod));
     var paymentsSelect = payments.Cast<PaymentMethod>()
                         .Select(e => new SelectListItem
-                                         {
-                                             Text = e.ToString(),
-                                             Value = e.ToString()
-                                         }).ToList();
+                        {
+                            Text = e.ToString(),
+                            Value = e.ToString()
+                        }).ToList();
 }
+
 <h3 class="fw-bolder text-bg-secondary rounded-2 p-2 text-center mx-5 mt-4">Complete Your Purchase</h3>
+
 <form asp-action="Purchase" asp-controller="Product" class="bg-body-tertiary p-4 m-5 rounded-5" enctype="multipart/form-data">
     <div asp-validation-summary="All" class="text-danger fw-bold"></div>
-    <div class="mb-3 px-3 d-none">
-        <label for="ProductId" class="form-label fw-bold">Quantity</label>
-        <input hidden asp-for="ProductId" class="form-control" placeholder="@Html.DisplayNameFor(m => m.ProductId)">
-        <span asp-validation-for="ProductId" class="form-text text-danger"></span>
+
+    <input hidden asp-for="ProductId" />
+    <div class="mb-3 px-3">
+        <label class="form-label fw-bold">Remaining Quantity</label>
+        <input type="text" class="form-control" value="@remainingQuantity" readonly style="color:red" />
     </div>
+
+
     <div class="mb-3 px-3">
         <label for="Quantity" class="form-label fw-bold">Quantity</label>
-        <input asp-for="Quantity" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Quantity)">
+        <input asp-for="Quantity" class="form-control" min="1" mix="@remainingQuantity" id="quantityInput" value="1" placeholder="@Html.DisplayNameFor(m => m.Quantity)" />
         <span asp-validation-for="Quantity" class="form-text text-danger"></span>
     </div>
+
     <div class="mb-3 px-3">
         <label for="FullName" class="form-label fw-bold">Full Name</label>
-        <input asp-for="FullName" class="form-control" placeholder="@Html.DisplayNameFor(m => m.FullName)">
+        @if (isAuthenticated)
+        {
+            <input asp-for="FullName" class="form-control" value="@fullName" readonly />
+        }
+        else
+        {
+            <input asp-for="FullName" class="form-control" placeholder="@Html.DisplayNameFor(m => m.FullName)" />
+        }
         <span asp-validation-for="FullName" class="form-text text-danger"></span>
     </div>
+
     <div class="mb-3 px-3">
         <label for="Email" class="form-label fw-bold">Email</label>
-        <input asp-for="Email" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Email)">
+        @if (isAuthenticated)
+        {
+            <input asp-for="Email" class="form-control" value="@email" readonly />
+        }
+        else
+        {
+            <input asp-for="Email" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Email)" />
+        }
         <span asp-validation-for="Email" class="form-text text-danger"></span>
     </div>
+
     <div class="mb-3 px-3">
         <label for="PhoneNumber" class="form-label fw-bold">Phone Number</label>
-        <input asp-for="PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(m => m.PhoneNumber)">
+        @if (isAuthenticated)
+        {
+            <input asp-for="PhoneNumber" class="form-control" value="@phone" readonly />
+        }
+        else
+        {
+            <input asp-for="PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(m => m.PhoneNumber)" />
+        }
         <span asp-validation-for="PhoneNumber" class="form-text text-danger"></span>
     </div>
+
     <div class="mb-3 px-3">
         <label for="Street" class="form-label fw-bold">Street</label>
-        <input asp-for="Street" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Street)">
+        <input asp-for="Street" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Street)" />
         <span asp-validation-for="Street" class="form-text text-danger"></span>
     </div>
+
     <div class="mb-3 px-3">
         <label for="City" class="form-label fw-bold">City</label>
-        <input asp-for="City" class="form-control" placeholder="@Html.DisplayNameFor(m => m.City)">
+        <input asp-for="City" class="form-control" placeholder="@Html.DisplayNameFor(m => m.City)" />
         <span asp-validation-for="City" class="form-text text-danger"></span>
     </div>
-    <div class="mb-3 px-3">
+
+@*     <div class="mb-3 px-3">
         <label for="ZIPCode" class="form-label fw-bold">ZIP Code</label>
-        <input asp-for="ZIPCode" class="form-control" placeholder="@Html.DisplayNameFor(m => m.ZIPCode)">
+        <input asp-for="ZIPCode" class="form-control" placeholder="@Html.DisplayNameFor(m => m.ZIPCode)" />
         <span asp-validation-for="ZIPCode" class="form-text text-danger"></span>
-    </div>
+    </div> *@
+
     <div class="mb-3 px-3">
         <label for="Country" class="form-label fw-bold">Country</label>
-        <input asp-for="Country" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Country)">
+        <input asp-for="Country" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Country)" />
         <span asp-validation-for="Country" class="form-text text-danger"></span>
     </div>
+
     <div class="mb-3 px-3">
         <label for="PaymentMethod" class="form-label fw-bold">Payment Method</label>
-            <select onchange="ToggleCardInfo(this)" class="form-select" asp-for="PaymentMethod" aria-label="Select Payment Method">
-                <option selected>Open this select menu</option>
-                @foreach(var payment in paymentsSelect)
-                {
-                    <option value="@payment.Value">@payment.Text</option>
-                }
-            </select>
-            @* <input asp-for="PaymentMethod" class="form-control" placeholder="@Html.DisplayNameFor(m => m.PaymentMethod)"> *@
-            <span asp-validation-for="PaymentMethod" class="form-text text-danger"></span>
-        </div>
+        <select onchange="ToggleCardInfo(this)" class="form-select" asp-for="PaymentMethod" aria-label="Select Payment Method">
+            <option selected disabled>Open this select menu</option>
+            @foreach (var payment in paymentsSelect)
+            {
+                <option value="@payment.Value">@payment.Text</option>
+            }
+        </select>
+        <span asp-validation-for="PaymentMethod" class="form-text text-danger"></span>
+    </div>
+
     <div id="CardInfo" class="d-none">
         <div class="mb-3 px-3">
             <label for="CardNumber" class="form-label fw-bold">Card Number</label>
-            <input asp-for="CardNumber" class="form-control" placeholder="@Html.DisplayNameFor(m => m.CardNumber)">
+            <input asp-for="CardNumber" class="form-control" placeholder="@Html.DisplayNameFor(m => m.CardNumber)" />
             <span asp-validation-for="CardNumber" class="form-text text-danger"></span>
         </div>
         <div class="mb-3 px-3">
             <label for="ExpiryDate" class="form-label fw-bold">Expiry Date</label>
-            <input asp-for="ExpiryDate" class="form-control" placeholder="@Html.DisplayNameFor(m => m.ExpiryDate)">
+            <input asp-for="ExpiryDate" class="form-control" placeholder="@Html.DisplayNameFor(m => m.ExpiryDate)" />
             <span asp-validation-for="ExpiryDate" class="form-text text-danger"></span>
         </div>
         <div class="mb-3 px-3">
             <label for="NameonCard" class="form-label fw-bold">Name on Card</label>
-            <input asp-for="NameonCard" class="form-control" placeholder="@Html.DisplayNameFor(m => m.NameonCard)">
+            <input asp-for="NameonCard" class="form-control" placeholder="@Html.DisplayNameFor(m => m.NameonCard)" />
             <span asp-validation-for="NameonCard" class="form-text text-danger"></span>
         </div>
         <div class="mb-3 px-3">
             <label for="CVV" class="form-label fw-bold">CVV</label>
-            <input asp-for="CVV" class="form-control" placeholder="@Html.DisplayNameFor(m => m.CVV)">
+            <input asp-for="CVV" class="form-control" placeholder="@Html.DisplayNameFor(m => m.CVV)" />
             <span asp-validation-for="CVV" class="form-text text-danger"></span>
         </div>
-        </div>
-    <button type="submit" class="btn btn-dark w-100 m-2 fw-bolder fs-6">Complete Purchase</button>
-    </form>
+    </div>
+
+    <button type="submit" class="btn custom-signin-btn btn-dark w-100 m-2 fw-bolder fs-6">Complete Purchase</button>
+</form>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-
-
     }
-
 }
+
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 <script>
-    // Cache the CardInfo element (make sure this matches your HTML element's ID)
+
+    
+    var remainingQuantity = @remainingQuantity;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantityInput = document.getElementById("quantityInput");
+
+        quantityInput.addEventListener("input", function () {
+            let val = parseInt(this.value);
+            if (val > remainingQuantity) {
+                alert("You cannot order more than the available quantity!");
+                this.value = remainingQuantity;
+            }
+        });
+    });
+
+
+
+
     var CardInfo = $('#CardInfo');
-
     function ToggleCardInfo(selectElement) {
-        // Get the selected value properly
         var selectedValue = $(selectElement).val();
-        console.log("Selected value:", selectedValue);
-
-        // Show/hide based on value (using strict equality)
-        if (selectedValue === "Card") {  // Changed from ev.val to selectedValue
+        if (selectedValue === "Card") {
             CardInfo.removeClass("d-none");
         } else {
             CardInfo.addClass("d-none");

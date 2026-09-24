@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+<main role="main" class="py-5">
+    <div class="container">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5 bg-white rounded-4">
+
+                <!-- ✅ عنوان الصفحة مع أيقونة -->
+                <h2 class="text-center mb-5 fw-bold">
+                    <span class="bg-black text-white px-3 py-2 rounded">
+                        <i class="bi bi-envelope-paper-fill me-2"></i> Contact Us
+                    </span>
+                </h2>
+
+
+                <div class="row g-4">
+                    <!-- ✅ بيانات التواصل -->
+                    <div class="col-md-6">
+                        <div class=" p-3 rounded-3 mb-3">
+                            <h5 class="fw-bold mb-1">📍 Address</h5>
+                            <p class="mb-0">Assiut, Cairo, Egypt</p>
+                        </div>
+
+                        <div class=" p-3 rounded-3 mb-3">
+                            <h5 class="fw-bold mb-1">📞 Phone</h5>
+                            <p class="mb-0">+20 121 164 6854</p>
+                           
+                        </div>
+
+                        <div class=" p-3 rounded-3 mb-3">
+                            <h5 class="fw-bold mb-1">📧 Email</h5>
+                            <p class="mb-0">mikhail.mansour.tech@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <!-- ✅ الخريطة -->
+                    <div class="col-md-6">
+                        <div class=" p-3 rounded-3 mb-3">
+                            <h5 class="fw-bold mb-2">🗺️ Find us on the map</h5>
+                        </div>
+                        <div class="ratio ratio-4x3 rounded-4 overflow-hidden shadow-sm">
+                            <img src="~/images/map/Map.jpg" class="w-100 h-100 object-fit-cover" alt="Our location on map" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ روابط السوشيال ميديا -->
+                <div class="text-center mt-5">
+                    <h5 class="fw-bold mb-3 text-dark">🔗 Follow us on social media</h5>
+                    <div class="d-flex justify-content-center gap-4 fs-3">
+                        <a href="https://www.facebook.com/YourPage" target="_blank" class="text-primary">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://www.instagram.com/YourPage" target="_blank" class="text-danger">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="https://twitter.com/YourPage" target="_blank" class="text-info">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/company/YourCompany" target="_blank" class="text-primary">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                        <a href="#" target="_blank" class="text-danger">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+                        <a href="https://wa.me/201001234567" target="_blank" class="text-success">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ✅ رسالة أسفل -->
+                <div class="text-center mt-4">
+                    <small class="text-muted">We're here to help you 24/7. Don't hesitate to reach out!</small>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>

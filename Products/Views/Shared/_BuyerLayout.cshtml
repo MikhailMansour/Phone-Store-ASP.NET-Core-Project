@@ -1,0 +1,177 @@
+﻿@using System.Security.Claims
+@using Products.Infrastructure
+@inject IHttpContextAccessor _httpContextAccessor
+@{
+    Layout = null;
+    var user = _httpContextAccessor.HttpContext.User;
+    var isAuthenticated = user.Identity.IsAuthenticated;
+    var userName = user.FindFirstValue(ClaimTypes.Name);
+
+    string? profilePhoto = "/images/userprofile/profileuser.png";
+    if (isAuthenticated)
+    {
+        var userIdStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(userIdStr, out var userId))
+        {
+            using (var scope = _httpContextAccessor.HttpContext.RequestServices.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+                var appUser = dbContext.Users.FirstOrDefault(u => u.Id == userId);
+                if (appUser != null && !string.IsNullOrEmpty(appUser.PhotoPath))
+                {
+                    profilePhoto = appUser.PhotoPath;
+                }
+            }
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Buyer Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #2F3E46;
+            color: white;
+            min-height: 100%;
+        }
+
+            .sidebar h4 {
+                font-weight: bold;
+                color: #4CAF50;
+                margin-bottom: 2rem;
+            }
+
+            .sidebar .nav-link {
+                color: white;
+                margin: 5px 0;
+                transition: color 0.3s ease;
+            }
+
+                /* إلغاء الخلفية الخضراء تماماً وجعل لون الكلمة أصفر ذهبي عند الضغط أو الوقوف عليها */
+                .sidebar .nav-link.active,
+                .sidebar .nav-link:hover {
+                    background-color: transparent !important;
+                    color: #ffc107 !important;
+                    font-weight: bold;
+                }
+
+        .main-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            min-height: 80vh;
+        }
+
+        .table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        h2 {
+            color: #2F3E46;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* تنسيق زر Sign Out باللون الأسود وعند التفاعل يتحول إلى #0d6efd */
+        .custom-signin-btn {
+            background-color: #212529 !important;
+            color: white !important;
+            border: none !important;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .custom-signin-btn:hover,
+            .custom-signin-btn:focus,
+            .custom-signin-btn:active {
+                background-color: #0d6efd !important;
+                color: white !important;
+            }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header class="text-white" style="background-color: #87CEEB; border-top: 3px solid #003366; border-bottom: 3px solid #003366; padding: 5px 0; height: 55px; display: flex; align-items: center;">
+            <div class="container-fluid px-4 w-100">
+                <div class="d-flex justify-content-between align-items-center w-100 position-relative">
+                    <div class="fs-4 fw-bold d-flex align-items-center">
+                        <a href="/Home/Index" class="text-decoration-none text-white d-flex align-items-center">
+                            <span class="me-2">📱</span> Phones Store
+                        </a>
+                    </div>
+                    
+ 
+                    @if (isAuthenticated)
+                    {
+                        <div class="d-flex align-items-center">
+                            <img src="@profilePhoto" class="rounded-circle me-2" width="35" height="35" style="object-fit: cover; border: 2px solid white;" />
+                            <span class="me-3 fw-bold">Welcome @userName</span>
+                            <form asp-controller="Authentication" asp-action="Logout" method="post" class="d-inline m-0">
+                                <button type="submit" class="btn custom-signin-btn">Sign Out</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <div class="container-fluid flex-grow-1">
+            <div class="row flex-grow-1" style="min-height: calc(100vh - 160px);">
+                <!-- Sidebar -->
+                <nav class="col-md-2 sidebar p-4 d-flex flex-column">
+                    <h4>🛠 Buyer Panel</h4>
+                    <ul class="nav flex-column w-100">
+                        <li class="nav-item mt-3"><a class="nav-link" asp-action="Index" asp-controller="Profile">Profile</a></li>
+                        <li class="nav-item mt-3"><a class="nav-link" asp-action="Dashboard" asp-controller="Buyer">Dashboard</a></li>
+                        <li class="nav-item mt-3"><a class="nav-link" asp-action="Index" asp-controller="Home">Home</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Main Content -->
+                <main class="col-md-10 p-4">
+                    <div class="main-content">
+                        @RenderBody()
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-white" style="background-color:#87CEEB; border-top: 3px solid #003366; border-bottom: 3px solid #003366; text-align:center; font-weight:bold; padding: 1rem;">
+            © 2025 Phones Store. All rights reserved.
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

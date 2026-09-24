@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Products.ViewModels.Product;
 
 namespace Products.Helpers
 {
@@ -20,11 +21,11 @@ namespace Products.Helpers
             var result = await values.Skip(numberOfExcluded).Take(size).ToListAsync();
             return new PaginationResult<T>
             {
-                Size = size,
-                CurrentPage = currentIndex,
-                TotalPages = totalPages,
-                TotalRecords = totalEntities,
-                values = result
+                PageSize = size,
+                PageNumber = currentIndex,
+                TotalCount = totalPages,
+                //TotalCount = totalEntities,
+                Items = result
             };
         }
     }

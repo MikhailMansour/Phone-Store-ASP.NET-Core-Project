@@ -1,70 +1,198 @@
-﻿@{
+﻿@using System.Security.Claims
+@using System.Security.Principal
+@using Products.Infrastructure
+
+@{
     Layout = null;
-    @inject IHttpContextAccessor _httpContextAccessor
+    @inject IHttpContextAccessor _httpContextAccessor;
+
+    var user = _httpContextAccessor.HttpContext.User;
+    var isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+    var userName = isAuthenticated ? user.FindFirstValue(ClaimTypes.Name) : string.Empty;
+    string? profilePhoto = "/images/userprofile/profileuser.png";
+
+    var userRole = string.Empty;
+
+    if (isAuthenticated)
+    {
+        var userIdStr = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(userIdStr, out var userId))
+        {
+            using (var scope = _httpContextAccessor.HttpContext.RequestServices.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+
+                var appUser = dbContext.Users.FirstOrDefault(u => u.Id == userId);
+                if (appUser != null && !string.IsNullOrEmpty(appUser.PhotoPath))
+                {
+                    profilePhoto = appUser.PhotoPath;
+                }
+
+                var userRoles = (from ur in dbContext.UserRoles
+                                 join r in dbContext.Roles on ur.RoleId equals r.Id
+                                 where ur.UserId == userId
+                                 select r.Name).ToList();
+
+                userRole = userRoles.FirstOrDefault() ?? string.Empty;
+            }
+        }
+    }
+
+    var isSaller = isAuthenticated && (user.IsInRole("Saller") || string.Equals(userRole, "Saller", StringComparison.OrdinalIgnoreCase));
+    var isBuyer = isAuthenticated && (user.IsInRole("Buyer") || string.Equals(userRole, "Buyer", StringComparison.OrdinalIgnoreCase));
+    var isAdmin = isAuthenticated && (user.IsInRole("Admin") || string.Equals(userRole, "Admin", StringComparison.OrdinalIgnoreCase));
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Products</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Phones Store</title>
+    <link href="~/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/Products.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Products.styles.css" asp-append-version="true" />
+    <style>
+        h1, h2, h3, h4, h5 {
+            font-weight: 700;
+        }
+
+        .nav-link:hover {
+            color: #003366 !important;
+        }
+
+        .btn {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        p, label {
+            font-size: 1.05rem;
+        }
+
+        /* تنسيق أزرار Buy Now لتكون سوداء وتتحول إلى الأزرق الداكن عند الضغط أو التمرير */
+        .btn-buy-now, a.btn-buy-now, .card .btn, .product-card .btn {
+            background-color: #212529 !important;
+            color: #ffffff !important;
+            border: none !important;
+            transition: background-color 0.3s ease;
+        }
+
+
+            .btn-buy-now:hover, a.btn-buy-now:hover, .card .btn:hover, .product-card .btn:hover,
+            .btn-buy-now:focus, a.btn-buy-now:focus, .card .btn:focus, .product-card .btn:focus,
+            .btn-buy-now:active, a.btn-buy-now:active, .card .btn:active, .product-card .btn:active {
+                background-color: #0d6efd !important;
+                color: #ffffff !important;
+            }
+
+        .dropdown-menu {
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            border: none;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <div class="py-4 text-center fs-3 bg-dark text-white fw-bolder">Mobile Phones Store</div>
-        <nav class="navbar navbar-expand-lg bg-dark navbar-dark fw-bold border-top border-3">
-            <div class="container d-flex justify-content-center">
-                @* <a class="navbar-brand fs-3 fw-bolder" href="#">Mini E-Commerce</a> *@
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+<body class="d-flex flex-column min-vh-100">
 
-                <div class="collapse navbar-collapse mx-auto" id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active fs-6 mx-3 px-3" aria-current="page" href="/Product/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fs-6 mx-3 px-3" href="/Product/Index">Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fs-6 mx-3 px-3" href="#">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fs-6 mx-3 px-3" href="#">Contact</a>
-                        </li>
-                        @if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link fs-6 mx-3 px-3" href="/Saller/Index">Dashboard</a>
-                            </li>
-                        }else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link fs-6 mx-3 px-3" href="/Authentication/SignIn">Login As Saller</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link fs-6 mx-3 px-3" href="/Authentication/Register">Rgister As Saller</a>
-                            </li>
-                        }
+    <!-- Header / Taskbar بنفس ارتفاع وسمك صفحة الـ Dashboard بالضبط (py-1) -->
+    <header class="text-white py-1" style="background-color: #87CEEB; border-top: 3px solid #003366; border-bottom: 3px solid #003366;">
+        <div class="container-fluid px-4">
+            <div class="d-flex align-items-center justify-content-between w-100 position-relative">
 
-                    </ul>
+                <!-- 1. الشعار في أقصى اليسار -->
+                <div>
+                    <a href="/Home/Index" class="text-decoration-none text-white">
+                        <div class="fs-4 fw-bold d-flex align-items-center">
+                            <span class="me-2">📱</span> Phones Store
+                        </div>
+                    </a>
                 </div>
+
+                <!-- 2. الروابط وصورة البروفيسور في المنتصف تماماً بدقة -->
+                <div class="position-absolute start-50 translate-middle-x">
+                    <nav class="navbar navbar-expand-lg py-0">
+                        <div class="container-fluid p-0">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarNav">
+                                <ul class="navbar-nav align-items-center">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white fw-bold px-3 py-1" href="/Home/Index">Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white fw-bold px-3 py-1" href="/About/Index">About</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white fw-bold px-3 py-1" href="/offers/Index">Today's Deals</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white fw-bold px-3 py-1" href="/ContactUs/Index">Contact</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white fw-bold px-3 py-1" href="/Home/FeedBack">Feedback</a>
+                                    </li>
+
+                                    <!-- صورة واسم المستخدم أو تسجيل الدخول في المنتصف -->
+                                    @if (isAuthenticated)
+                                    {
+                                        <li class="nav-item dropdown ms-3">
+                                            <a class="nav-link dropdown-toggle text-white fw-bold d-inline-flex align-items-center py-1" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <img src="@profilePhoto" class="rounded-circle me-1" width="32" height="32" style="object-fit: cover; border: 1px solid white;" />
+                                                <span>@userName</span>
+                                            </a>
+                                            <ul class="dropdown-menu text-start p-2" aria-labelledby="userDropdown">
+                                                @if (isSaller)
+                                                {
+                                                    <li><a class="dropdown-item fw-semibold py-1" href="/Saller/Index">Dashboard</a></li>
+                                                }
+                                                else if (isBuyer)
+                                                {
+                                                    <li><a class="dropdown-item fw-semibold py-1" href="/Buyer/Dashboard">Dashboard</a></li>
+                                                }
+                                                else if (isAdmin)
+                                                {
+                                                    <li><a class="dropdown-item fw-semibold py-1" href="/Admin/Dashboard">Dashboard</a></li>
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="nav-item ms-3">
+                                            <a class="nav-link text-white fw-bold py-1" href="/Authentication/SignIn">Login</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+
+                <!-- عنصر فارغ للموازنة في اليمين -->
+                <div></div>
+
             </div>
-        </nav>
+        </div>
     </header>
-    <div class="">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+
+    <!-- Main Content -->
+    <main role="main" class="my-4 px-3 flex-grow-1">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-white mt-auto py-2" style="background-color: #87CEEB; border-top: 3px solid #003366; border-bottom: 3px solid #003366;">
+        <div class="container text-center fw-bold" style="font-size: 0.9rem;">
+            © 2025 Phones Store. All rights reserved.
+        </div>
+    </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>

@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewData["Title"] = "FeedBack";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+<section class="bg-white rounded-4 p-5 mt-5 shadow-sm">
+    <div class="text-center mb-5">
+        @* <h2 class="fw-bold text-dark">Welcome to Mobile Phones Store</h2> *@
+        <h2 class="text-center mb-5 fw-bold">
+            <span class="bg-black text-white px-3 py-2 rounded">
+                <i class="bi bi-telephone"></i>
+                FeedBack 
+            </span>
+        </h2>
+
+    </div>
+
+    <form method="post" asp-controller="Contact" asp-action="SendMessage">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <label class="form-label text-dark">Name</label>
+                <input type="text" name="Name" class="form-control rounded-3" required />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-dark">Phone</label>
+                <input type="text" name="Phone" class="form-control rounded-3" required />
+            </div>
+            <div class="col-12">
+                <label class="form-label text-dark">Message</label>
+                <textarea name="Message" class="form-control rounded-3" rows="4" required></textarea>
+            </div>
+            <div class="col-12 text-center">
+                <button class="btn custom-signin-btn py-2 rounded-pill fw-bold" type="submit">Send Message</button>
+            </div>
+        </div>
+    </form>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+</section>
+

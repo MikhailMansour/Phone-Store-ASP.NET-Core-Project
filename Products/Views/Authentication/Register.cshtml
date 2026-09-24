@@ -3,41 +3,82 @@
     ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_MyLayout.cshtml";
 }
+<main role="main" class="py-5" style="min-height: 100vh;">
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="col-md-7">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5 bg-white rounded-4">
+                    
+                    <h2 class="text-center mb-5 fw-bold">
+                        <span class="bg-black text-white px-3 py-2 rounded">
+                            Create your Account
+                        </span>
+                    </h2>
+                    <!-- Validation Summary -->
+                    <div asp-validation-summary="All" class="text-danger fw-bold mb-3"></div>
 
-<div class="row justify-content-center align-content-center">
+                    <!-- Register Form -->
+                    <form asp-action="Register" method="post" enctype="multipart/form-data" novalidate>
+                        <!-- Role -->
+                        <div class="mb-3">
+                            <label asp-for="Role" class="form-label fw-semibold">Select Role</label>
+                            <select asp-for="Role" class="form-select rounded-pill">
+                                <option value="">-- Choose Role --</option>
+                                @* <option value="Admin">Admin</option>
+                                <option value="Sellar">Sellar</option> *@
+                                <option value="Buyer">Buyer</option>
+                            </select>
+                            <span asp-validation-for="Role" class="form-text text-danger"></span>
+                        </div>
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label fw-semibold"></label>
+                            <input asp-for="UserName" class="form-control rounded-pill" placeholder="Enter your username" />
+                            <span asp-validation-for="UserName" class="form-text text-danger"></span>
+                        </div>
 
-    <div class="col-md-9 bg-body rounded-3 shadow-lg p-3 m-2">
-        <form asp-action="Register" class="bg-body-tertiary p-4 m-5 rounded-5" enctype="multipart/form-data" enctype="multipart/form-data">
-            <div asp-validation-summary="All" class="text-danger  fw-bold"></div>
-            <div class="mb-3 px-3">
-                <label for="UserName" class="form-label fw-bold">User Name</label>
-                <input asp-for="UserName" class="form-control" placeholder="@Html.DisplayNameFor(m => m.UserName)">
-                <span asp-validation-for="UserName" class="form-text text-danger"></span>
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" class="form-control rounded-pill" placeholder="you@example.com" />
+                            <span asp-validation-for="Email" class="form-text text-danger"></span>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold"></label>
+                            <input asp-for="Password" class="form-control rounded-pill" placeholder="••••••••" />
+                            <span asp-validation-for="Password" class="form-text text-danger"></span>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                            <input asp-for="PhoneNumber" class="form-control rounded-pill" placeholder="Enter your phone number" />
+                            <span asp-validation-for="PhoneNumber" class="form-text text-danger"></span>
+                        </div>
+
+                        <!-- SSN -->
+                        @* <div class="mb-4">
+                            <label asp-for="SSN" class="form-label fw-semibold"></label>
+                            <input asp-for="SSN" class="form-control rounded-pill" placeholder="Enter your SSN" />
+                            <span asp-validation-for="SSN" class="form-text text-danger"></span>
+                        </div> *@
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn custom-signin-btn w-100 py-2 rounded-pill fw-bold">Register</button>
+
+                    </form>
+
+                    <!-- Link to Login -->
+                    <div class="text-center mt-4">
+                        <small class="text-muted">Already have an account? <a href="/Authentication/SignIn" class="text-primary fw-bold">Sign In</a></small>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3 px-3">
-                <label for="Email" class="form-label fw-bold">Email</label>
-                <input asp-for="Email" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Email)">
-                <span asp-validation-for="Email" class="form-text text-danger"></span>
-            </div>
-            <div class="mb-3 px-3">
-                <label for="Password" class="form-label fw-bold">Password</label>
-                <input asp-for="Password" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Password)">
-                <span asp-validation-for="Password" class="form-text text-danger"></span>
-            </div>
-            <div class="mb-3 px-3">
-                <label for="PhoneNumber" class="form-label fw-bold">Phone Number</label>
-                <input asp-for="PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(m => m.PhoneNumber)">
-                <span asp-validation-for="PhoneNumber" class="form-text text-danger"></span>
-            </div>
-            <div class="mb-3 px-3">
-                <label for="SSN" class="form-label fw-bold">SSN</label>
-                <input asp-for="SSN" class="form-control" placeholder="@Html.DisplayNameFor(m => m.SSN)">
-                <span asp-validation-for="SSN" class="form-text text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-dark w-100 m-2 fw-bolder fs-6">Register</button>
-        </form>
+        </div>
     </div>
-</div>
+</main>
 
 @section Scripts {
     @{

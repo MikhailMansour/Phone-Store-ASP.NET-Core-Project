@@ -1,68 +1,175 @@
 ﻿@using System.Security.Claims
+@inject Microsoft.AspNetCore.Identity.UserManager<Products.Models.ApplicationUser> UserManager
 @{
     Layout = null;
     @inject IHttpContextAccessor _httpContextAccessor
+
+    var user = _httpContextAccessor.HttpContext.User;
+    var isAuthenticated = user.Identity.IsAuthenticated;
+    var isSeller = user.IsInRole("Saller");
+    var isBuyer = user.IsInRole("Buyer");
+    var isAdmin = user.IsInRole("Admin");
+
+    var appUser = isAuthenticated ? await UserManager.GetUserAsync(user) : null;
+    var profileImg = !string.IsNullOrEmpty(appUser?.PhotoPath) ? appUser.PhotoPath : "~/images/users/default-user.png";
 }
 <!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>_SallerLayout</title>
-</head>
-<body>
-</body>
-</html>
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Products</title>
-    <script type="importmap"></script>
-    <link href="~/datatable/css/datatable-bootstrap.min.css" rel="stylesheet" />
-    <link href="~/datatable/css/datatable.min.css" rel="stylesheet" />
-    <link href="~/lib/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/Products.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --sky-blue: #87CEEB;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            min-height: 100vh;
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+
+        main {
+            flex: 1;
+        }
+
+        header, footer {
+            background-color: var(--sky-blue);
+            color: white;
+            padding: 10px 0;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            border: 3px solid white;
+        }
+
+        .navbar {
+            background-color: transparent !important;
+            height: 100%;
+            width: 100%;
+            padding: 0;
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: bold;
+        }
+
+            .nav-link:hover {
+                color: #ffc107 !important;
+            }
+
+        footer p {
+            margin: 0;
+            font-weight: bold;
+            width: 100%;
+            text-align: center;
+        }
+
+        .custom-signin-btn {
+            background-color: #212529;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+            .custom-signin-btn:hover {
+                background-color: #0d6efd;
+                color: white;
+            }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg bg-dark navbar-dark fw-bold border-top border-3">
-            <div class="container d-flex justify-content-center">
-                <a class="navbar-brand fs-3 fw-bolder">
-                   Welcome  @_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name);
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse mx-auto" id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active fs-6 mx-3 px-3" aria-current="page" href="/Saller/Index">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active fs-6 mx-3 px-3" aria-current="page" href="/Product/GetStatistics">Statistics</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fs-6 mx-3 px-3" href="/Product/Index">See Shop</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fs-6 mx-3 px-3" href="/Authentication/LogOut">SignOut</a>
-                        </li>
-                    </ul>
+    <!-- Header -->
+    <header style="border-top: 3px solid #003366; border-bottom: 3px solid #003366;">
+        <div class="container-fluid px-4 w-100">
+            <div class="d-flex justify-content-between align-items-center w-100 position-relative">
+                <div class="fs-4 fw-bold d-flex align-items-center text-white">
+                    <span class="me-2">📱</span> Phones Store
                 </div>
+                <!-- روابط القائمة في المنتصف تماماً -->
+                <nav class="navbar navbar-expand-lg navbar-dark fw-bold justify-content-center position-absolute start-50 translate-middle-x">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                            @if (isAuthenticated && isSeller)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link px-2" href="/Profile/Index">
+                                        <i class="fas fa-user"></i> Profile
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link px-2" href="/Saller/Index">
+                                        <i class="fas fa-boxes"></i> Products
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link px-2" href="/Product/GetStatistics">
+                                        <i class="fas fa-cog"></i> <b>Statistics</b>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link px-2" href="/Home/Index">
+                                        <i class="fas fa-home"></i> Home
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <a class="nav-link px-2" href="/Authentication/LogOut">
+                                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- ترحيب المستخدم والصورة في أقصى اليمين -->
+                <div class="d-flex align-items-center flex-shrink-0 ms-auto">
+                    <a class="navbar-brand fs-6 d-flex align-items-center text-decoration-none m-0" href="/Profile/Index">
+                        <span class="me-2">Welcome @_httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Name)</span>
+                        <img src="@profileImg" alt="Profile" class="rounded-circle" style="width: 35px; height: 35px; object-fit: cover; border: 2px solid white;" />
+                    </a>
+                </div>
+
             </div>
-        </nav>
+        </div>
     </header>
-    <div class="">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+
+    <!-- Body -->
+    <main class="container py-4">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer style="border-top: 3px solid #003366; border-bottom: 3px solid #003366;">
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year - All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/datatable/js/datatable.jquery.min.js"></script>
     <script src="~/datatable/js/datatable.min.js"></script>

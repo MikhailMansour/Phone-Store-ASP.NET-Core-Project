@@ -5,7 +5,15 @@ namespace Products.Models
 {
     public class ApplicationUser : IdentityUser<int>
     {
-        public string? SSN { get; set; } = null!;
-        public List<Product>? SalesProducts { get; set; } = new List<Product>();
+        // Remove or comment this line
+        // public string SSN { get; set; }
+
+
+        //public string? SSN { get; set; } = null!;
+        
+            public String? PhotoPath { get; set; }
+        public List<Product>? SallesProducts { get; set; } = new List<Product>();
+        public List<ProductBuyer> ProductBuyers { get; set; } = new List<ProductBuyer>();
+
     }
 }

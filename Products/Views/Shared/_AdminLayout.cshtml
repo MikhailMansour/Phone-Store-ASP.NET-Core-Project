@@ -1,0 +1,150 @@
+﻿@using System.Security.Claims
+@inject Microsoft.AspNetCore.Identity.UserManager<Products.Models.ApplicationUser> UserManager
+@inject IHttpContextAccessor _httpContextAccessor
+@{
+    Layout = null;
+    var user = _httpContextAccessor.HttpContext.User;
+    var isAuthenticated = user.Identity.IsAuthenticated;
+    var appUser = isAuthenticated ? await UserManager.GetUserAsync(user) : null;
+    var profileImg = !string.IsNullOrEmpty(appUser?.PhotoPath) ? appUser.PhotoPath : "~/images/users/default-user.png";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
+
+    <style>
+
+        .custom-logout-btn {
+            background-color: #000000; /* لون أسود أساسي */
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+            .custom-logout-btn:hover,
+            .custom-logout-btn:active,
+            .custom-logout-btn:focus {
+                background-color: #0d6efd !important; /* اللون الأزرق الداكن زي المنتجات */
+                color: white !important;
+            }
+        :root {
+            --sky-blue: #87CEEB;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body {
+            min-height: 100vh;
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: var(--sky-blue);
+            color: white;
+            padding: 10px 20px;
+            border-bottom: 3px solid #003366;
+            border-top: 3px solid #003366;
+        }
+
+        .sidebar {
+            background-color: #343a40;
+            min-height: calc(100vh - 160px);
+            color: white;
+        }
+
+            .sidebar a {
+                color: white;
+                text-decoration: none;
+                padding: 0;
+                display: block;
+                font-weight: bold;
+            }
+
+                .sidebar a:hover {
+                    color: #ffc107;
+                }
+
+        main {
+            flex: 1;
+        }
+
+        footer {
+            background-color: var(--sky-blue);
+            color: #003366; /* لون النص عشان يكون واضح ومقروء على السماوي */
+            text-align: center;
+            padding: 12px 0;
+            border-top: 3px solid #003366;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar / Header -->
+    <header class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <div class="fs-4 fw-bold d-flex align-items-center text-white">
+                <span class="me-2">📱</span> Phones Store
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <!-- Profile Image, Welcome & Name -->
+            <a class="navbar-brand fs-6 d-flex align-items-center text-white text-decoration-none me-3" href="/Profile/Index">
+                <img src="@profileImg" alt="Profile" class="rounded-circle me-2" style="width: 35px; height: 35px; object-fit: cover; border: 2px solid white;" />
+                <span>Welcome @user.FindFirstValue(ClaimTypes.Name)</span>
+            </a>
+
+            <a href="/Authentication/LogOut" class="btn text-white px-3 py-1 fw-bold custom-logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </a>
+        </div>
+    </header>
+
+    <div class="container-fluid flex-grow-1 d-flex p-0">
+        <!-- Sidebar -->
+        <nav class="col-md-2 sidebar p-4 d-flex flex-column">
+            <h4>🛠 Admin Panel</h4>
+            <ul class="nav flex-column w-100">
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Index" asp-controller="Profile">Profile</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Dashboard" asp-controller="Admin">Dashboard</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Register" asp-controller="Admin">Registration</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Products" asp-controller="Admin">Products</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Users" asp-controller="Admin">Buyers</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Sallers" asp-controller="Admin">Sallers</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Orders" asp-controller="Admin">Sales Report</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="ClientMessage" asp-controller="Admin">Client Message</a></li>
+                <li class="nav-item mt-3"><a class="nav-link" asp-action="Index" asp-controller="Home">Home</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-10 p-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="mb-0">&copy; 2026 Phones Store. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

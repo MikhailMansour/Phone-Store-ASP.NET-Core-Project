@@ -1,0 +1,49 @@
+﻿
+
+@model ProductBuyer
+@{
+    ViewData["Title"] = "Receipt";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+<h2>📦 Receipt</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>Buyer</th>
+            <th>Quantity</th>
+            <th>Price of Produect</th>
+            <th>Produect Image</th>
+            <th>Total price</th>
+            <th>ShippingStreet</th>
+            <th>ShippingCity</th>
+          
+            <th>ShippingCountry</th>
+
+
+            <th>Payment Method</th>
+        </tr>
+    </thead>
+    <tbody>
+   
+            <tr>
+                <td>@Model.Id</td>
+                <td>@Model.Product?.Name</td>
+                <td>@Model.User?.UserName</td>
+                <td>@Model.Quantity</td>
+                  <td>@Model.Price</td>
+            <td>@(Model.Quantity * (Model.Price ?? 0))</td>
+            <td> <img src="~/images/@Model.Product?.HeaderImage" class="card-img-top" height="200px"></td>
+                <td>@Model.Address.Street</td>
+                <td>@Model.Address.City</td>
+             
+                <td>@Model.Address.Country</td>
+
+                <td>@Model.PaymentMethod</td>
+            </tr>
+        
+    </tbody>
+</table>

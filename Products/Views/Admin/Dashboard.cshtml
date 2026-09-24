@@ -1,0 +1,41 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var stats = ViewBag.Stats;
+}
+
+<h2>📊 Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Products</h5>
+                <p class="card-text fs-4">@ViewBag.Stats.ProductsCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Buyers</h5>
+                <p class="card-text fs-4">@ViewBag.Stats.BuyersCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Sallers</h5>
+                <p class="card-text fs-4">@ViewBag.Stats.SellersCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Orders</h5>
+                <p class="card-text fs-4">@ViewBag.Stats.OrdersCount</p>
+            </div>
+        </div>
+    </div>
+</div>

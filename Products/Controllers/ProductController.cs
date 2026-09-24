@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Products.Models;
 using Products.Services;
 using Products.ViewModels.Product;
 
@@ -30,6 +31,7 @@ namespace Products.Controllers
         {
             if (!ModelState.IsValid)
             {
+                
                 return View(viewModel);
             }
             await _productServices.AddProductAsync(viewModel);
@@ -39,19 +41,38 @@ namespace Products.Controllers
         [HttpGet]
         public async Task<IActionResult> Product(int productId)
         {
+
+            // Check if the user is logged in
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Redirect to the Sign-In page if not logged in
+                return RedirectToAction("SignIn", "Authentication");
+            }
+
+            // Check if the user has the "Buyer" role
+            if (!User.IsInRole("Buyer"))
+            {
+                // Redirect to an unauthorized page or another view if the user is not a Buyer
+                return RedirectToAction("SignIn", "Authentication");
+            }
+
             var product = await _productServices.ProductAsync(productId);
             var viewModel = new PurchaseProductViewModel
             {
                 Product = product,
                 Buyer = new BuyerDetails()
             };
+            viewModel.Buyer.Quantity = viewModel.Product.Quantity;
+            viewModel.Buyer.NumOfSoldItems = viewModel.Product.NumOfSoldItems;
             return View(viewModel);
         }
         [HttpPost]
         public async Task<IActionResult> Purchase(BuyerDetails viewModel)
         {
-            await _productServices.PurchaseAsync(viewModel);
-            return RedirectToAction("Index");
+            viewModel.ZIPCode = "";
+            var PurchaseOrder = await _productServices.PurchaseAsync(viewModel);
+            return RedirectToAction("Receipt", "Purchase", new { id = PurchaseOrder.Id });
+            // return RedirectToAction("Index");
         }
         [Authorize(Roles = "Saller")]
         public async Task<IActionResult> Update(int id)
@@ -63,6 +84,12 @@ namespace Products.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(UpdateProductViewModel model)
         {
+            if (model.HasOffer && (model.DiscountPrice == null || model.DiscountPrice >= model.Price))
+            {
+                ModelState.AddModelError("DiscountPrice", "Discount price must be less than the original price.");
+                return View(model);
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);

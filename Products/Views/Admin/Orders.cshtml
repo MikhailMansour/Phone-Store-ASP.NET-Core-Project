@@ -1,0 +1,48 @@
+﻿@model List<ProductBuyer>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>📦 Sales Report</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>Buyer</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total Price</th>
+            <th>ShippingStreet</th>
+            <th>ShippingCity</th>
+            <!--
+           <th>ShippingZipCode</th>
+            -->
+            <th>ShippingCountry</th>
+
+            <th>Payment Method</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sale in Model)
+        {
+            <tr>
+                <td>@sale.Id</td>
+                <td>@sale.Product?.Name</td>
+                <td>@sale.User?.UserName</td>
+                <td>@sale.Quantity</td>
+                <td>@sale.Price</td>
+                <td>@(sale.Quantity * sale.Price) </td>
+                <td>@sale.Address.Street</td>
+                <td>@sale.Address.City</td>
+                <!--
+                <td>@sale.Address.ZIPCode</td>
+                -->
+                <td>@sale.Address.Country</td>
+
+                <td>@sale.PaymentMethod</td>
+            </tr>
+        }
+    </tbody>
+</table>

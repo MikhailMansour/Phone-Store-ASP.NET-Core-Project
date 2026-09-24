@@ -1,0 +1,92 @@
+﻿@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<main role="main" class="py-5" style="min-height: 100vh;">
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="col-md-7">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5 bg-white rounded-4">
+                    <center>
+                        <span class="bg-black text-center text-white px-3 py-2 rounded">
+                        <b>Create your Account</b>
+
+                        </span>
+                    </center>
+                    <!-- Validation Summary -->
+                    <div asp-validation-summary="All" class="text-danger fw-bold mb-3"></div>
+
+                    <!-- Register Form -->
+                    <form asp-action="Register" method="post" enctype="multipart/form-data" novalidate>
+                        <!-- Role -->
+                        <div class="mb-3">
+                            <label asp-for="Role" class="form-label fw-semibold">Select Role</label>
+                            <select asp-for="Role" class="form-select rounded-pill">
+                                <option value="">-- Choose Role --</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Saller">Saller</option>
+@*                                 <option value="Buyer">Buyer</option>
+ *@                            </select>
+                            <span asp-validation-for="Role" class="form-text text-danger"></span>
+                        </div>
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label fw-semibold"></label>
+                            <input asp-for="UserName" class="form-control rounded-pill" placeholder="Enter your username" />
+                            <span asp-validation-for="UserName" class="form-text text-danger"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label fw-semibold"></label>
+                            <input asp-for="Email" class="form-control rounded-pill" placeholder="you@example.com" />
+                            <span asp-validation-for="Email" class="form-text text-danger"></span>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold"></label>
+                            <input asp-for="Password" class="form-control rounded-pill" placeholder="••••••••" />
+                            <span asp-validation-for="Password" class="form-text text-danger"></span>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                            <input asp-for="PhoneNumber" class="form-control rounded-pill" placeholder="Enter your phone number" />
+                            <span asp-validation-for="PhoneNumber" class="form-text text-danger"></span>
+                        </div>
+
+                        <!-- SSN -->
+                        @* <div class="mb-4">
+                            <label asp-for="SSN" class="form-label fw-semibold"></label>
+                            <input asp-for="SSN" class="form-control rounded-pill" placeholder="Enter your SSN" />
+                            <span asp-validation-for="SSN" class="form-text text-danger"></span>
+                        </div> *@
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn custom-signin-btn w-100 py-2 rounded-pill fw-bold">Register</button>
+
+                    </form>
+
+                    <!-- Link to Login -->
+                    <div class="text-center mt-4">
+                        <small class="text-muted">Already have an account? <a href="/Authentication/SignIn" class="text-primary fw-bold">Sign In</a></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

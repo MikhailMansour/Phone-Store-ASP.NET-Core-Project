@@ -1,0 +1,83 @@
+﻿@using System.Security.Claims
+@using Products.Infrastructure
+@model EditProfileViewModel
+
+@inject IHttpContextAccessor _httpContextAccessor;
+
+@{
+    // Get user from context
+    var user = _httpContextAccessor.HttpContext.User;
+    var isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+
+    // Get roles
+    var isAdmin = user.IsInRole("Admin");
+    var isSeller = user.IsInRole("Saller"); // fix typo: "Seller" vs "Sellar" if needed
+    var isBuyer = user.IsInRole("Buyer");
+
+    ViewBag.Title = "User Profile";
+
+    // Apply layout based on priority: Admin > Seller > Buyer
+    if (isAdmin)
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (isSeller)
+    {
+        Layout = "~/Views/Shared/_SallerLayout.cshtml"; // also fix typo in layout name if needed
+    }
+    else if (isBuyer)
+    {
+        Layout = "~/Views/Shared/_BuyerLayout.cshtml";
+    }
+    // else
+    // {
+    //     Layout = "~/Views/Shared/_DefaultLayout.cshtml"; // fallback layout
+    // }
+}
+
+
+@if(isSeller)
+{
+    <h3 class=" mb-5 fw-bold">
+        <span class="bg-black text-white px-3 py-2 rounded">
+            <i class="fas fa-cog"></i> Profile
+        </span>
+    </h3>
+    <hr />
+}
+else
+{
+
+    <h2 class="mb-4"> Profile</h2>
+    
+}
+
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form asp-action="Index" method="post" enctype="multipart/form-data" class="w-50">
+    <div class="mb-3">
+        <label asp-for="UserName" class="form-label"></label>
+        <input asp-for="UserName" class="form-control" />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label>Profile Photo</label>
+        <input type="file" asp-for="ProfileImage" class="form-control" />
+        @if (Model.ExistingImagePath != null)
+        {
+            <img src="@Model.ExistingImagePath" alt="Profile" width="100" class="mt-2 border rounded" />
+        }
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

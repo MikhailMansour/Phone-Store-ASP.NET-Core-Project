@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Identity;
 using Products.Infrastructure;
 using Products.Models;
 
@@ -22,6 +23,11 @@ namespace Products.Helpers
             _applicationContext = applicationContext;
         }
 
+        public DataSeeder(RoleManager<ApplicationRole> roleManager)
+        {
+            _roleManager = roleManager;
+        }
+
         private async Task CreateSallerRole()
         {
             var isExsist = await _roleManager.FindByNameAsync("Saller") == null ? false : true;
@@ -31,27 +37,45 @@ namespace Products.Helpers
                 await _roleManager.CreateAsync(sallerRole);
             }
         }
+        public async Task CreateAllRoles()
+        {
+            //var isExsistA = await _roleManager.FindByNameAsync("Admin") == null ? false : true;
+            //if (!isExsist)
+            //{
+            //    var sallerRole = new ApplicationRole { Name = "Admin" };
+            //    await _roleManager.CreateAsync(sallerRole);
+            //}
+            string[] roles = { "Admin", "Saller", "Buyer" };
+
+            foreach (var role in roles)
+            {
+                if (!await _roleManager.RoleExistsAsync(role))
+                {
+                    await _roleManager.CreateAsync(new ApplicationRole { Name = role });
+                }
+            }
+        }
         private void GenerateSallers()
         {
             Sallers = new List<ApplicationUser>
             {
                  new ApplicationUser
                  {
-                     UserName = "seller1",
-                     Email = "seller1@example.com",
-                     SSN = "123-45-6789",
+                     UserName = "saller1",
+                     Email = "saller1@example.com",
+                     //SSN = "123-45-6789",
                  },
                  new ApplicationUser
                  {
-                     UserName = "seller2",
-                     Email = "seller2@example.com",
-                     SSN = "987-65-4321",
+                     UserName = "saller2",
+                     Email = "saller2@example.com",
+                     //SSN = "987-65-4321",
                  },
                  new ApplicationUser
                  {
-                     UserName = "seller3",
-                     Email = "seller3@example.com",
-                     SSN = "987-65-4321",
+                     UserName = "saller3",
+                     Email = "saller3@example.com",
+                     //SSN = "987-65-4321",
                  },
             };
         }
@@ -596,7 +620,8 @@ namespace Products.Helpers
         public async Task SeedData()
         {
 
-            await CreateSallerRole();
+           // await CreateSallerRole();
+            await CreateAllRoles();
             //GenerateSallers();
             //GenerateProducts();
             //await SeedSaller();

@@ -2,7 +2,7 @@
 
 namespace Products.ViewModels.Product
 {
-    public class CreateProductViewModel
+    public class CreateProductViewModel:IValidatableObject
     {
         [Display(Name = "e.g. Iphone Pro Max")]
         [Required(ErrorMessage = "ProductName is Required")]
@@ -75,7 +75,25 @@ namespace Products.ViewModels.Product
         [Range(0, int.MaxValue, ErrorMessage = "Quantity Can not be Minus")]
         [Required(ErrorMessage = "Quantity Colors is Required")]
         public int Quantity { get; set; }
+
+        public bool HasOffer { get; set; }
+        public double? DiscountPrice { get; set; }
+
         public IFormFile HeaderImage { get; set; }
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (HasOffer)
+            {
+                if (DiscountPrice == null)
+                {
+                    yield return new ValidationResult("Discount Price is required when the product has an offer.", new[] { nameof(DiscountPrice) });
+                }
+                else if (DiscountPrice >= Price)
+                {
+                    yield return new ValidationResult("Discount Price must be less than the original Price.", new[] { nameof(DiscountPrice) });
+                }
+            }
+        }
 
     }
 }

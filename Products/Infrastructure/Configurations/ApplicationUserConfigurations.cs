@@ -8,7 +8,7 @@ namespace Products.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            builder.HasMany(a => a.SalesProducts)
+            builder.HasMany(a => a.SallesProducts)
                    .WithOne(p => p.Seller)
                    .HasForeignKey(a => a.SellerId);
         }

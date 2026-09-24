@@ -1,0 +1,59 @@
+﻿@model List<ProductBuyer>
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_BuyerLayout.cshtml";
+    
+}
+
+
+
+<h2>📊 Dashboard</h2>
+
+
+
+
+
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            
+            <th>Product</th>
+            <th>Buyer</th>
+            <th>Quantity</th>
+            <th>Price of Produect</th>
+            <th>Produect Image</th>
+            <th>Total price</th>
+            <th>ShippingStreet</th>
+            <th>ShippingCity</th>
+          
+            <th>ShippingCountry</th>
+
+
+            <th>Payment Method</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+               
+                <td>@item.Product?.Name</td>
+                <td>@item.User?.UserName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price</td>
+                <td>@(item.Quantity * (item.Price ?? 0))</td>
+                <td> <img src="~/images/@item.Product?.HeaderImage" width="100px" height="100px"></td>
+                <td>@item.Address.Street</td>
+                <td>@item.Address.City</td>
+           
+                <td>@item.Address.Country</td>
+
+                <td>@item.PaymentMethod</td>
+            </tr>
+        }
+        
+
+    </tbody>
+</table>
+

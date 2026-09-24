@@ -1,0 +1,11 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var stats = ViewBag.Stats;
+}
+<h2>Dashboard</h2>
+<p>Welcome to the admin panel!</p>
+<ul>
+    <li><strong>Products:</strong> @stats.ProductsCount</li>
+    <li><strong>Buyers:</strong> @stats.BuyersCount</li>
+    <li><strong>Sallers:</strong> @stats.SallersCount</li>
+</ul>

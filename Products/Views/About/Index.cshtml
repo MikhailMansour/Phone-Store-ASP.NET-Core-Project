@@ -1,0 +1,137 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_MyLayout.cshtml";
+}
+
+<main role="main" class="py-5" style="min-height: 100vh;">
+    <div class="container">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5 bg-white rounded-4">
+
+                <!-- Slider -->
+                <div id="heroSlider" class="carousel slide mb-5 rounded-4 shadow overflow-hidden position-relative" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="position-relative">
+                                <img src="~/images/about/slider1.jpg" class="d-block w-100" style="height: 350px; object-fit: cover;" alt="Slide 1">
+                                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-3 p-3">
+                                    <h5 class="text-white">Premium Phones</h5>
+                                    <p>Discover the latest technology</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="position-relative">
+                                <img src="~/images/about/Slider2.png" class="d-block w-100" style="height: 350px; object-fit: cover;" alt="Slide 2">
+                                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-3 p-3">
+                                    <h5 class="text-white">Unmatched Quality</h5>
+                                    <p>Only the best devices for you</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#heroSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#heroSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <!-- About Us Header -->
+
+                <h2 class="text-center mb-5 fw-bold">
+                    <span class="bg-black text-white px-3 py-2 rounded">
+                        <i class="bi bi-info-circle-fill me-2"></i> About Us
+                    </span>
+                </h2>
+
+               
+
+                <!-- About Paragraph -->
+                <div class="mb-4">
+                    <p class="text-muted fs-5 text-center">
+                        Welcome to <strong>Mobile Phones Store</strong>, your number one source for all premium mobile devices and accessories.
+                        We're dedicated to giving you the very best of tech, with a focus on quality, reliability, and unbeatable customer service.
+                    </p>
+                </div>
+
+                <!-- Info Boxes -->
+                <div class="row g-4 text-center mt-5">
+                    <div class="col-md-4">
+                        <div class="p-4 shadow-sm rounded-4  h-100">
+                            
+                            <h5 class="text-center mb-5 fw-bold">
+                                <span class="bg-black text-white px-3 py-2 rounded">
+                                    <i class="bi bi-bullseye me-2"></i>Our Mission
+                                </span>
+                            </h5>
+
+
+                            <p>To deliver the latest and most reliable mobile devices to customers across Egypt and beyond, with top-tier support and satisfaction.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 shadow-sm rounded-4  h-100">
+                        
+                            <h5 class="text-center mb-5 fw-bold">
+                                <span class="bg-black text-white px-3 py-2 rounded">
+                                    <i class="bi bi-rocket-takeoff me-2"></i>Our Vision
+                                </span>
+                            </h5>
+
+                            <p>To become the #1 trusted mobile phone retailer in the Middle East, known for innovation, trust, and excellence.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 shadow-sm rounded-4  h-100">
+                            
+                            <h5 class="text-center mb-5 fw-bold">
+                                <span class="bg-black text-white px-3 py-2 rounded">
+                                    <i class="bi bi-lightbulb-fill me-2"></i>Why Choose Us
+                                </span>
+                            </h5>
+
+                            <p>We offer authentic products, secure payments, fast delivery, and a commitment to outstanding customer care.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Section -->
+                <div class="mt-5 text-center">
+                    <div class="text-center mb-4 py-3 rounded-4 ">
+                       
+                        <h5 class="text-center mb-5 fw-bold">
+                            <span class="bg-black text-white px-3 py-2 rounded">
+                                <i class="bi bi-people-fill me-2"></i> Meet Our Team
+                            </span>
+                        </h5>
+                    </div>
+
+                    <div class="row justify-content-center">
+                        <div class="col-md-4">
+                           
+                            <div class="card shadow-sm border-0 rounded-4">
+                                <img src="~/images/team/team.jpeg" class="card-img-top rounded-top-4" alt="Team Member" style="height: 250px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">Mikhail Mansour </h5>
+                                    <p class="card-text text-muted">Developer</p>
+                                    <p class="card-text text-muted"><i class="bi bi-telephone"></i> +2 01211646854</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-muted mt-4">Our team is passionate about technology and dedicated to serving you.</p>
+                </div>
+
+                <div class="text-center mt-4">
+                    <small class="text-muted">Thank you for choosing Mobile Phones Store. We’re always here to help you stay connected.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

@@ -28,6 +28,19 @@
                 <input asp-for="Price" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Price)">
                 <span asp-validation-for="Price" class="form-text text-danger"></span>
             </div>
+            <!-- Has Offer -->
+            <div class="mb-3 px-3 form-check">
+                <input asp-for="HasOffer" class="form-check-input" type="checkbox" id="hasOfferCheckbox" />
+                <label class="form-check-label fw-bold" for="hasOfferCheckbox">Has Offer?</label>
+            </div>
+
+            <!-- Discount Price -->
+            <div class="mb-3 px-3" id="discountSection" style="display: none;">
+                <label class="form-label fw-bold">Discount Price</label>
+                <input asp-for="DiscountPrice" class="form-control" />
+                <span asp-validation-for="DiscountPrice" class="form-text text-danger"></span>
+            </div>
+
             <div class="mb-3 px-3">
                 <label for="Description" class="form-label fw-bold">Description</label>
                 <input asp-for="Description" class="form-control" placeholder="@Html.DisplayNameFor(m => m.Description)">
@@ -148,6 +161,35 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const hasOfferCheckbox = document.getElementById("hasOfferCheckbox");
+        const discountSection = document.getElementById("discountSection");
+
+        function toggleDiscountSection() {
+            discountSection.style.display = hasOfferCheckbox.checked ? "block" : "none";
+        }
+
+        hasOfferCheckbox.addEventListener("change", toggleDiscountSection);
+        toggleDiscountSection(); // on page load
+
+        // Optional: client-side validation
+        document.querySelector("form").addEventListener("submit", function (e) {
+            const price = parseFloat(document.querySelector("[name='Price']").value);
+            const discount = parseFloat(document.querySelector("[name='DiscountPrice']").value);
+
+            if (hasOfferCheckbox.checked) {
+                if (isNaN(discount)) {
+                    alert("Please enter a valid discount price.");
+                    e.preventDefault();
+                } else if (discount >= price) {
+                    alert("Discount price must be less than the original price.");
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+</script>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery/dist/jquery.slim.min.js"></script>

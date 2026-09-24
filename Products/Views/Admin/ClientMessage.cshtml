@@ -1,0 +1,30 @@
+﻿@model List<ContactMessage>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>Client Message</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Message</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var Message in Model)
+        {
+            <tr>
+                <td>@Message.Id</td>
+                <td>@Message.Name</td>
+                <td>@Message.Phone</td>
+                <td>@Message.Message</td>
+                
+            </tr>
+        }
+    </tbody>
+</table>

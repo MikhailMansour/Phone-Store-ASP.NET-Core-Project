@@ -30,23 +30,31 @@ namespace Products.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel viewModel)
         {
+            
             if (!ModelState.IsValid)
                 return View(viewModel);
             var appUser = viewModel.Adapt<ApplicationUser>();
             var result = await _userManager.CreateAsync(appUser, viewModel.Password);
             if (!result.Succeeded)
             {
-                ModelState.AddModelError("Somthing Went Wrong", $"Can't Register");
+                string ErrorMessage = "";
+                foreach (var item in result.Errors)
+                {
+                    ErrorMessage += item.Description + "<br>";
+                }
+                ModelState.AddModelError("Somthing Went Wrong", $"Can't Register" + ErrorMessage);
                 return View(viewModel);
             }
-            var roleResult = await _userManager.AddToRoleAsync(appUser, "Saller");
+            //var roleResult = await _userManager.AddToRoleAsync(appUser, "Saller");
+            // Assign role
+            var roleResult = await _userManager.AddToRoleAsync(appUser, viewModel.Role);
             if (!roleResult.Succeeded)
             {
                 ModelState.AddModelError("Somthing Went Wrong", $"Can't Register");
                 return View(viewModel);
             }
 
-            return RedirectToAction("SignIn");
+            return RedirectToAction("Index","Home");
         }
 
         [HttpGet]
@@ -70,11 +78,21 @@ namespace Products.Controllers
                 ModelState.AddModelError("UserNotFound", "User Or Password Wrong");
                 return View(viewModel);
             }
+            var roles = await _userManager.GetRolesAsync(user);
+            var userRole = roles.FirstOrDefault(); // لو عايز أول دور فقط
             await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"));
-            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "Admin"));
+            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, userRole));
             // Add any additional claims
             await _signInManager.SignInAsync(user, viewModel.RememberMe);
-            return RedirectToAction("Index", "Saller");
+
+            if (userRole == "Admin")
+                return RedirectToAction("Dashboard", "Admin");
+            else if (userRole == "Saller")
+                return RedirectToAction("Index", "Saller");
+            else if (userRole == "Buyer")
+                return RedirectToAction("Index", "Home");
+            else
+                return RedirectToAction("Index", "Home");
         }
         public async Task<IActionResult> CreateSallerRole()
         {

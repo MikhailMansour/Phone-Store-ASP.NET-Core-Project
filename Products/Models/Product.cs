@@ -19,11 +19,14 @@
         public int? Battery { get; set; }
         public string Display { get; set; } = null!;
         public string Colors { get; set; } = null!;
-        public List<Buyer>? Buyers { get; set; } = new List<Buyer>();
+        //public List<Buyer>? Buyers { get; set; } = new List<Buyer>();
         public bool IsBought { get; set; }
         public List<ProductImages>? Images { get; set; } = new List<ProductImages>();
         public int Quantity { get; set; }
         public string HeaderImage { get; set; } = null!;
         public int NumOfSoldItems { get; set; }
+        public bool HasOffer { get; set; } = false;
+        public double? DiscountPrice { get; set; }
+
     }
 }

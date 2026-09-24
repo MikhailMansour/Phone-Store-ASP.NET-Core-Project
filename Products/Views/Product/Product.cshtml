@@ -31,8 +31,22 @@
             </div>
             <div class="card-body mt-5">
                 <h5 class="card-title fw-bold">@Model.Product.Name</h5>
-                <h5 class="card-text fw-bold">@Model.Product.Description</h5>
-                <h5 class="card-text fw-bold">@Model.Product.Price EGP</h5>
+                <h5 class="card-title fw-bold">Smart Phone</h5>
+@*                 <h5 class="card-text fw-bold">@Model.Product.Description</h5>
+ *@               
+ @if (Model.Product.HasOffer && Model.Product.DiscountPrice.HasValue)
+                {
+                    <h5 class="fw-bold text-danger">
+                        <span class="text-decoration-line-through text-secondary me-3">@Model.Product.Price EGP</span>
+                        <span class="fs-4">@Model.Product.DiscountPrice.Value EGP</span>
+                    </h5>
+                    <span class="badge bg-success fs-6 mb-3">🔥 عرض خاص</span>
+                }
+                else
+                {
+                    <h5 class="card-text fw-bold">@Model.Product.Price EGP</h5>
+                }
+
                 <h5 class="card-text fw-bold border-bottom pb-3">Specifications : </h5>
                 <h6 class="my-3"><span class="fw-bold text-info fs-5 me-5 ">Brand : </span>@Model.Product.Brand</h6>
                 <h6 class="my-3"><span class="fw-bold text-info fs-5 me-5 ">Model : </span>@Model.Product.Name</h6>

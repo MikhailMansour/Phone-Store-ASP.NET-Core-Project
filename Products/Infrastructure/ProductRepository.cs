@@ -49,9 +49,15 @@ namespace Products.Infrastructure
             return isDelted;
         }
 
-        public async Task AddProductBuyerAsync(ProductBuyer productBuyer)
+        //public async Task AddProductBuyerAsync(ProductBuyer productBuyer)
+        //{
+        //    await _ApplicationContext.ProductsBuyers.AddAsync(productBuyer);
+        //}
+        public async Task<ProductBuyer> AddProductBuyerAsync(ProductBuyer productBuyer)
         {
             await _ApplicationContext.ProductsBuyers.AddAsync(productBuyer);
+            await _ApplicationContext.SaveChangesAsync(); // This ensures the ID is generated
+            return productBuyer;
         }
         public async Task Save()
         {
